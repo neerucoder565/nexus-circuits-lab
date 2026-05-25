@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "motion/react";
 import { Section } from "@/components/SiteShell";
 import { Code2, CircuitBoard, Cpu } from "lucide-react";
 
@@ -15,22 +14,14 @@ export const Route = createFileRoute("/skills")({
   component: Skills,
 });
 
-type Level = "Beginner" | "Beginner / Intermediate" | "Intermediate" | "Advanced";
-
-const LEVEL_PCT: Record<Level, number> = {
-  "Beginner": 35,
-  "Beginner / Intermediate": 55,
-  "Intermediate": 70,
-  "Advanced": 90,
-};
-
-const GROUPS: { icon: typeof Code2; title: string; items: { name: string; level: Level }[] }[] = [
+const GROUPS = [
   {
     icon: Code2,
     title: "Programming & Firmware",
     items: [
       { name: "Embedded C", level: "Intermediate" },
       { name: "Arduino Prototyping", level: "Advanced" },
+      { name: "Python", level: "Intermediate" },
       { name: "PID Control Systems", level: "Intermediate" },
       { name: "Edge AI Integration", level: "Beginner / Intermediate" },
     ],
@@ -68,23 +59,11 @@ function Skills() {
               <g.icon className="text-neon" size={22} strokeWidth={1.5} />
               <h3 className="font-display uppercase text-sm tracking-widest">{g.title}</h3>
             </div>
-            <ul className="space-y-5">
-              {g.items.map((item, i) => (
-                <li key={item.name}>
-                  <div className="flex justify-between text-xs mb-1.5 gap-2">
-                    <span>{item.name}</span>
-                    <span className="text-neon whitespace-nowrap">{item.level}</span>
-                  </div>
-                  <div className="h-1 bg-muted relative overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${LEVEL_PCT[item.level]}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.1, delay: i * 0.08, ease: "easeOut" }}
-                      className="absolute inset-y-0 left-0 bg-neon"
-                      style={{ boxShadow: "0 0 8px var(--neon)" }}
-                    />
-                  </div>
+            <ul className="space-y-4">
+              {g.items.map((item) => (
+                <li key={item.name} className="flex justify-between items-baseline gap-3 border-b border-border/40 pb-2">
+                  <span className="text-sm">{item.name}</span>
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-neon whitespace-nowrap">{item.level}</span>
                 </li>
               ))}
             </ul>
