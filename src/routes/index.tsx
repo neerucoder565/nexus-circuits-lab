@@ -33,7 +33,7 @@ function Home() {
               & Hardware <span className="text-neon">Solutions</span>.
             </h1>
             <p className="mt-6 text-muted-foreground max-w-lg leading-relaxed">
-              Embedded systems engineer focused on firmware, circuit design, sensor integration, and real-time control systems. I build intelligent hardware solutions that combine efficient electronics, clean signal processing, and reliable embedded performance.
+              Embedded systems engineer focused on firmware, circuit design, sensor integration, and real-time control systems. Specialized in intelligent hardware development, clean signal processing, and reliable embedded performance.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3">
@@ -84,12 +84,12 @@ function Home() {
       </section>
 
       {/* CAPABILITIES */}
-      <Section eyebrow="CAPABILITIES" title="Engineering Stack">
+      <Section eyebrow="SKILLS" title="Engineering Stack">
         <div className="grid md:grid-cols-3 gap-6">
           {[
             { icon: Cpu, title: "Embedded Firmware", desc: "Arduino, embedded C, real-time control loops and PID stability tuning." },
             { icon: CircuitBoard, title: "Hardware Design", desc: "R-2R DACs, sensor fusion rigs, PCB and breadboard prototyping." },
-            { icon: Zap, title: "Systems Analysis", desc: "Structural & weight analysis informed by automotive engineering principles." },
+            { icon: Zap, title: "System Analysis", desc: "Digital system architecture, RISC-V fundamentals, real-time system behavior and low-level hardware optimization." },
           ].map((c) => (
             <Panel key={c.title}>
               <c.icon className="text-neon mb-4" size={28} strokeWidth={1.5} />
