@@ -1,0 +1,100 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Panel, Section } from "@/components/SiteShell";
+import { GraduationCap, Briefcase } from "lucide-react";
+
+export const Route = createFileRoute("/about")({
+  head: () => ({
+    meta: [
+      { title: "About — Neeraj K" },
+      { name: "description", content: "Engineer with deep interest in embedded systems, automotive tech and electronics design." },
+      { property: "og:title", content: "About — Neeraj K" },
+      { property: "og:description", content: "Structural & weight analysis engineer building hardware-focused projects." },
+    ],
+  }),
+  component: About,
+});
+
+const SKILLS = [
+  "Embedded Systems", "Arduino Programming", "Electronics Circuit Design",
+  "Sensor Fusion", "PID Control Systems", "DAC Design (R-2R Ladder)",
+  "Circuit Simulation & Testing", "Hardware Debugging", "PCB / Breadboard Prototyping",
+  "Structural Analysis", "Weight Analysis", "Basic AI + Hardware Integration",
+];
+
+function About() {
+  return (
+    <>
+      <Section eyebrow="IDENTITY.LOG" title="About Neeraj K">
+        <div className="grid lg:grid-cols-3 gap-8">
+          <Panel className="lg:col-span-2">
+            <p className="text-muted-foreground leading-relaxed">
+              I'm a structural and weight analysis engineer with a parallel obsession
+              for embedded systems, automotive technologies, and electronics design.
+              My work sits at the intersection of analytical engineering and practical
+              hardware — control systems, DAC circuits, sensor fusion rigs, and
+              offline communication systems.
+            </p>
+            <p className="mt-4 text-muted-foreground leading-relaxed">
+              I like the moment a breadboard turns from a tangle of wires into a
+              measurable response on a scope. Most of my projects start with a
+              question about stability, signal integrity, or how hardware can be
+              made to behave predictably under real-world load.
+            </p>
+          </Panel>
+          <Panel>
+            <div className="text-xs text-neon tracking-[0.3em] mb-4">// QUICK SPECS</div>
+            <ul className="space-y-3 text-sm">
+              <li className="flex justify-between"><span className="text-muted-foreground">Role</span><span>Hardware Engineer</span></li>
+              <li className="flex justify-between"><span className="text-muted-foreground">Focus</span><span>Embedded / Analysis</span></li>
+              <li className="flex justify-between"><span className="text-muted-foreground">Location</span><span>India</span></li>
+              <li className="flex justify-between"><span className="text-muted-foreground">Status</span><span className="text-neon">Open to work</span></li>
+            </ul>
+          </Panel>
+        </div>
+      </Section>
+
+      <Section eyebrow="EDUCATION & EXPERIENCE" title="Trajectory">
+        <div className="grid md:grid-cols-2 gap-6">
+          <Panel>
+            <GraduationCap className="text-neon mb-3" size={24} strokeWidth={1.5} />
+            <h3 className="font-display text-xl uppercase">Education</h3>
+            <div className="mt-4">
+              <div className="text-sm">Bachelor's Degree in Engineering</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                College name & graduation year
+              </div>
+            </div>
+          </Panel>
+          <Panel>
+            <Briefcase className="text-neon mb-3" size={24} strokeWidth={1.5} />
+            <h3 className="font-display text-xl uppercase">Experience</h3>
+            <div className="mt-4 space-y-3 text-sm">
+              <div>
+                <div>Structural & Weight Analysis Engineer</div>
+                <div className="text-xs text-muted-foreground">Small-scale automotive engineering projects</div>
+              </div>
+              <div>
+                <div>Hardware-Focused Project Development</div>
+                <div className="text-xs text-muted-foreground">Embedded experimentation & electronics prototyping</div>
+              </div>
+            </div>
+          </Panel>
+        </div>
+      </Section>
+
+      <Section eyebrow="TECHNICAL STACK" title="Skills Matrix">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+          {SKILLS.map((s, i) => (
+            <div
+              key={s}
+              className="corners relative border border-border bg-card/30 px-4 py-3 text-sm glow-border-hover"
+            >
+              <span className="text-neon mr-2 text-xs">{String(i + 1).padStart(2, "0")}</span>
+              {s}
+            </div>
+          ))}
+        </div>
+      </Section>
+    </>
+  );
+}
