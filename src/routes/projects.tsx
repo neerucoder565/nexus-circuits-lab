@@ -18,11 +18,11 @@ export const Route = createFileRoute("/projects")({
 const PROJECTS = [
   {
     id: "01",
-    title: "Offline Emergency Comms",
-    sub: "Bluetooth Mesh Networking",
-    overview: "Disaster-resilient device-to-device emergency messaging without internet connectivity. Prioritises life-critical traffic and reduces network congestion.",
-    tech: ["Bluetooth Mesh", "Embedded C", "Priority Queue", "Networking"],
-    outcomes: "Concept validated for low-bandwidth survival comms with priority-aware routing.",
+    title: "Edge Vision Detection System",
+    sub: "Deep Vision Preprocessing Pipeline",
+    overview: "Real-time object detection and image preprocessing pipeline optimized for intelligent vision systems. Designed for efficient feature extraction, noise reduction, and low-latency detection workflows.",
+    tech: ["Computer Vision", "Image Processing", "Object Detection", "AI Pipeline"],
+    outcomes: "Streamlined vision pipeline delivering low-latency detection on resource-constrained hardware.",
   },
   {
     id: "02",
