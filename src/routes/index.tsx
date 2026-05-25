@@ -27,19 +27,13 @@ function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="text-xs text-neon tracking-[0.35em] mb-6 flex items-center gap-2">
-              <span className="size-1.5 rounded-full bg-neon anim-pulse-neon" />
-              SYS.READY // NEERAJ_K.exe
-            </div>
             <h1 className="font-display text-4xl md:text-6xl uppercase leading-[1.05]">
               Building <span className="text-neon">Intelligent</span><br />
               Embedded Systems<br />
               & Hardware <span className="text-neon">Solutions</span>.
             </h1>
             <p className="mt-6 text-muted-foreground max-w-lg leading-relaxed">
-              Structural and weight analysis engineer fluent in embedded firmware,
-              circuit design, and sensor systems. I prototype hardware that does
-              the analytical work — clean signals, reliable control, measurable results.
+              Embedded systems engineer focused on firmware, circuit design, sensor integration, and real-time control systems. I build intelligent hardware solutions that combine efficient electronics, clean signal processing, and reliable embedded performance.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3">
