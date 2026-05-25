@@ -56,7 +56,8 @@ function Home() {
                 Contact Me
               </Link>
               <a
-                href="#"
+                href="/Neeraj_K_Resume.pdf"
+                download="Neeraj_K_Resume.pdf"
                 className="inline-flex items-center gap-2 border border-border px-5 py-3 text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
               >
                 <Download size={14} /> Resume
