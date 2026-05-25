@@ -28,17 +28,16 @@ function About() {
         <div className="grid lg:grid-cols-3 gap-8">
           <Panel className="lg:col-span-2">
             <p className="text-muted-foreground leading-relaxed">
-              I'm a structural and weight analysis engineer with a parallel obsession
-              for embedded systems, automotive technologies, and electronics design.
-              My work sits at the intersection of analytical engineering and practical
-              hardware — control systems, DAC circuits, sensor fusion rigs, and
-              offline communication systems.
+              Embedded systems engineer specializing in firmware, embedded hardware,
+              and real-time electronic systems. Experienced in circuit design, sensor
+              integration, DAC architectures, embedded control applications, and
+              programming with C, C++, and Python.
             </p>
             <p className="mt-4 text-muted-foreground leading-relaxed">
-              I like the moment a breadboard turns from a tangle of wires into a
-              measurable response on a scope. Most of my projects start with a
-              question about stability, signal integrity, or how hardware can be
-              made to behave predictably under real-world load.
+              Focused on efficient system behavior, hardware-software interaction, and
+              reliable electronic design for intelligent embedded applications. Strong
+              technical interest in RISC-V computing, edge intelligence, and
+              next-generation embedded technologies.
             </p>
           </Panel>
           <Panel>
