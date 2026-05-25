@@ -44,7 +44,7 @@ function About() {
             <div className="text-xs text-neon tracking-[0.3em] mb-4">// QUICK SPECS</div>
             <ul className="space-y-3 text-sm">
               <li className="flex justify-between"><span className="text-muted-foreground">Role</span><span>Hardware Engineer</span></li>
-              <li className="flex justify-between"><span className="text-muted-foreground">Focus</span><span>Embedded / Analysis</span></li>
+              <li className="flex justify-between"><span className="text-muted-foreground">Focus</span><span>Embedded / VLSI</span></li>
               <li className="flex justify-between"><span className="text-muted-foreground">Location</span><span>India</span></li>
               <li className="flex justify-between"><span className="text-muted-foreground">Status</span><span className="text-neon">Open to work</span></li>
             </ul>
