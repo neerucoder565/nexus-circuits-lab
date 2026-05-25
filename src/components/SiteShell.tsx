@@ -20,10 +20,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 border-b border-border/50 backdrop-blur-md bg-background/70">
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
           <Link to="/" className="group flex items-center gap-2">
-            <span className="font-display text-neon text-lg tracking-[0.25em]">[N.K]</span>
-            <span className="hidden sm:inline text-xs text-muted-foreground tracking-widest">
-              // ENGINEER
-            </span>
+            <span className="font-display text-neon text-lg tracking-[0.25em]">NEERAJ K</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
