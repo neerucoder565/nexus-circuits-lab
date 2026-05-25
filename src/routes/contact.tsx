@@ -16,9 +16,9 @@ export const Route = createFileRoute("/contact")({
 });
 
 const CHANNELS = [
-  { icon: Mail, label: "Email", value: "neerajk.official@gmail.com", href: "mailto:neerajk.official@gmail.com" },
-  { icon: Phone, label: "Phone", value: "+91 85937 91825", href: "tel:+918593791825" },
-  { icon: Linkedin, label: "LinkedIn", value: "linkedin.com/in/neerajk-official", href: "https://linkedin.com/in/neerajk-official" },
+  { icon: Mail, label: "Email", value: "neerajmadan2006@gmail.com", href: "mailto:neerajmadan2006@gmail.com" },
+  { icon: Phone, label: "Phone", value: "+91 88257 69448", href: "tel:+918825769448" },
+  { icon: Linkedin, label: "LinkedIn", value: "linkedin.com/in/neeraj-k-301386328", href: "https://www.linkedin.com/in/neeraj-k-301386328" },
   { icon: Github, label: "GitHub", value: "github.com/Neerajk-official", href: "https://github.com/Neerajk-official" },
 ];
 

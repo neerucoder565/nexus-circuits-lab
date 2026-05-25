@@ -98,7 +98,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
               <Github size={18} />
             </a>
             <a
-              href="https://linkedin.com/in/neerajk-official"
+              href="https://www.linkedin.com/in/neeraj-k-301386328"
               target="_blank"
               rel="noreferrer"
               className="text-muted-foreground hover:text-neon transition-colors"
@@ -107,7 +107,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
               <Linkedin size={18} />
             </a>
             <a
-              href="mailto:neerajk.official@gmail.com"
+              href="mailto:neerajmadan2006@gmail.com"
               className="text-muted-foreground hover:text-neon transition-colors"
               aria-label="Email"
             >
