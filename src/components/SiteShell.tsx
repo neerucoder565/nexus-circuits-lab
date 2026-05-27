@@ -45,12 +45,12 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             })}
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <Link to="/contact" className="hidden md:flex items-center gap-3 group">
             <span className="size-2 rounded-full bg-neon anim-pulse-neon" />
-            <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-              ONLINE
+            <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground group-hover:text-neon transition-colors">
+              // OPEN TO WORK
             </span>
-          </div>
+          </Link>
 
           <button
             className="md:hidden text-foreground"
