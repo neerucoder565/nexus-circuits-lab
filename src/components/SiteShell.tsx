@@ -86,7 +86,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           </div>
           <div className="flex items-center gap-4">
             <a
-              href="https://github.com/Neerajk-official"
+              href="https://github.com/Neeraj0410"
               target="_blank"
               rel="noreferrer"
               className="text-muted-foreground hover:text-neon transition-colors"

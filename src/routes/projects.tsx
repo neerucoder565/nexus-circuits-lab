@@ -66,7 +66,7 @@ function Projects() {
             <div className="flex items-start justify-between mb-4">
               <div className="text-xs text-neon tracking-[0.3em]">PRJ_{p.id}</div>
               <div className="flex gap-2 opacity-60 group-hover:opacity-100 transition">
-                <a href="https://github.com/Neerajk-official" target="_blank" rel="noreferrer" aria-label="GitHub" className="text-muted-foreground hover:text-neon"><Github size={16} /></a>
+                <a href="https://github.com/Neeraj0410" target="_blank" rel="noreferrer" aria-label="GitHub" className="text-muted-foreground hover:text-neon"><Github size={16} /></a>
                 <ExternalLink size={16} className="text-muted-foreground" />
               </div>
             </div>
