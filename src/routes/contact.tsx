@@ -19,7 +19,7 @@ const CHANNELS = [
   { icon: Mail, label: "Email", value: "neerajmadan2006@gmail.com", href: "mailto:neerajmadan2006@gmail.com" },
   { icon: Phone, label: "Phone", value: "+91 88257 69448", href: "tel:+918825769448" },
   { icon: Linkedin, label: "LinkedIn", value: "linkedin.com/in/neeraj-k-301386328", href: "https://www.linkedin.com/in/neeraj-k-301386328" },
-  { icon: Github, label: "GitHub", value: "github.com/Neerajk-official", href: "https://github.com/Neerajk-official" },
+  { icon: Github, label: "GitHub", value: "github.com/Neeraj0410", href: "https://github.com/Neeraj0410" },
 ];
 
 function Contact() {
