@@ -32,6 +32,7 @@ const PROJECTS = [
     date: "2025-Q2",
     title: "4-bit R-2R Ladder DAC",
     sub: "Arduino-driven Analog Output",
+    image: r2rImg,
     overview: "Built and tested a 4-bit digital-to-analog converter using resistor ladder architecture and Arduino control logic. Verified voltage outputs across all 16 binary combinations.",
     tech: ["Arduino", "R-2R Ladder", "Breadboard", "Multimeter"],
     outcomes: "Stable linear voltage steps; demonstrated DAC fundamentals on bare hardware.",
@@ -50,6 +51,7 @@ const PROJECTS = [
     date: "2024-Q4",
     title: "PID Control System",
     sub: "Stability & Overshoot Reduction",
+    image: pidImg,
     overview: "Studied and implemented proportional, integral and derivative control. Tuned parameters for stability, overshoot reduction and faster system response.",
     tech: ["Control Theory", "Arduino", "Simulation", "Tuning"],
     outcomes: "Hands-on intuition for PID tuning trade-offs across plant dynamics.",
@@ -83,16 +85,28 @@ function Projects() {
             </div>
 
             <div className="relative mb-4 aspect-[16/9] border border-border bg-background/40 overflow-hidden grid place-items-center"
-              style={{
+              style={!p.image ? {
                 backgroundImage:
                   "linear-gradient(rgba(0,255,170,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,0.06) 1px, transparent 1px)",
                 backgroundSize: "20px 20px",
-              }}
+              } : undefined}
             >
-              <div className="absolute inset-0 pointer-events-none" style={{
-                backgroundImage: "repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px)"
-              }} />
-              <div className="text-[10px] text-neon tracking-[0.3em] relative">// PHOTO COMING SOON</div>
+              {p.image ? (
+                <>
+                  <img src={p.image} alt={`${p.title} hardware build`} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="absolute inset-0 pointer-events-none" style={{
+                    backgroundImage: "repeating-linear-gradient(0deg, rgba(0,0,0,0.25) 0px, rgba(0,0,0,0.25) 1px, transparent 1px, transparent 3px)"
+                  }} />
+                  <div className="absolute bottom-2 left-2 text-[9px] text-neon tracking-[0.3em] bg-background/70 px-2 py-1 border border-neon/30">// LIVE BUILD</div>
+                </>
+              ) : (
+                <>
+                  <div className="absolute inset-0 pointer-events-none" style={{
+                    backgroundImage: "repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px)"
+                  }} />
+                  <div className="text-[10px] text-neon tracking-[0.3em] relative">// PHOTO COMING SOON</div>
+                </>
+              )}
             </div>
 
             <h3 className="font-display text-2xl uppercase leading-tight">{p.title}</h3>
