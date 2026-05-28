@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { ExternalLink } from "lucide-react";
 import { Section } from "@/components/SiteShell";
+import pidImg from "@/assets/project-pid.jpg";
+import r2rImg from "@/assets/project-r2r.jpg";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
