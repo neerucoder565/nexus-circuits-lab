@@ -1,9 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Code2 } from "lucide-react";
+import { useState } from "react";
 import { Section } from "@/components/SiteShell";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import pidImg from "@/assets/project-pid.jpg";
 import r2rImg from "@/assets/project-r2r.jpg";
+import { R2R_CODE, PID_CODE, type CodeFile } from "@/data/project-code";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
@@ -17,7 +21,19 @@ export const Route = createFileRoute("/projects")({
   component: Projects,
 });
 
-const PROJECTS = [
+type Project = {
+  id: string;
+  date: string;
+  title: string;
+  sub: string;
+  image?: string;
+  overview: string;
+  tech: string[];
+  outcomes: string;
+  code?: CodeFile[];
+};
+
+const PROJECTS: Project[] = [
   {
     id: "01",
     date: "2025-Q3",
@@ -36,6 +52,7 @@ const PROJECTS = [
     overview: "Built and tested a 4-bit digital-to-analog converter using resistor ladder architecture and Arduino control logic. Verified voltage outputs across all 16 binary combinations.",
     tech: ["Arduino", "R-2R Ladder", "Breadboard", "Multimeter"],
     outcomes: "Stable linear voltage steps; demonstrated DAC fundamentals on bare hardware.",
+    code: R2R_CODE,
   },
   {
     id: "03",
@@ -55,8 +72,56 @@ const PROJECTS = [
     overview: "Studied and implemented proportional, integral and derivative control. Tuned parameters for stability, overshoot reduction and faster system response.",
     tech: ["Control Theory", "Arduino", "Simulation", "Tuning"],
     outcomes: "Hands-on intuition for PID tuning trade-offs across plant dynamics.",
+    code: PID_CODE,
   },
 ];
+
+function CodeViewer({ project }: { project: Project }) {
+  const [open, setOpen] = useState(false);
+  if (!project.code?.length) return null;
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1.5 text-[9px] tracking-[0.25em] uppercase border border-neon/40 text-neon px-2 py-1 hover:bg-neon/10 transition-colors"
+          aria-label={`View source code for ${project.title}`}
+        >
+          <Code2 size={11} />
+          // View Code
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl border-border bg-background/95 backdrop-blur">
+        <DialogHeader>
+          <DialogTitle className="font-display uppercase tracking-wider text-xl">
+            <span className="text-neon">PRJ_{project.id}</span> {project.title} — Source
+          </DialogTitle>
+        </DialogHeader>
+        <Tabs defaultValue={project.code[0].name} className="mt-2">
+          <TabsList className="flex flex-wrap h-auto bg-card/40 border border-border">
+            {project.code.map((f) => (
+              <TabsTrigger
+                key={f.name}
+                value={f.name}
+                className="text-[10px] tracking-widest uppercase data-[state=active]:text-neon data-[state=active]:bg-background/60"
+              >
+                {f.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {project.code.map((f) => (
+            <TabsContent key={f.name} value={f.name} className="mt-3">
+              <pre className="text-[11px] leading-relaxed font-mono text-foreground/90 bg-background/70 border border-border p-4 overflow-auto max-h-[60vh]">
+                <code>{f.code}</code>
+              </pre>
+            </TabsContent>
+          ))}
+        </Tabs>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function Projects() {
   return (
@@ -77,9 +142,13 @@ function Projects() {
                 <div className="text-[10px] text-muted-foreground tracking-[0.25em]">// {p.date}</div>
               </div>
               <div className="flex gap-2 items-center">
-                <span className="text-[9px] tracking-[0.25em] uppercase border border-neon/40 text-neon/80 px-2 py-1">
-                  // Code coming soon
-                </span>
+                {p.code?.length ? (
+                  <CodeViewer project={p} />
+                ) : (
+                  <span className="text-[9px] tracking-[0.25em] uppercase border border-neon/40 text-neon/80 px-2 py-1">
+                    // Code coming soon
+                  </span>
+                )}
                 <ExternalLink size={16} className="text-muted-foreground opacity-60" />
               </div>
             </div>
