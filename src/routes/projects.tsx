@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import pidImg from "@/assets/project-pid.jpg";
 import r2rImg from "@/assets/project-r2r.jpg";
+import edgeVisionImg from "@/assets/project-edge-vision.png";
 import { R2R_CODE, PID_CODE, type CodeFile } from "@/data/project-code";
 
 export const Route = createFileRoute("/projects")({
@@ -39,6 +40,7 @@ const PROJECTS: Project[] = [
     date: "2025-Q3",
     title: "Edge Vision Detection System",
     sub: "On-Device Vision on Resource-Constrained Hardware",
+    image: edgeVisionImg,
     overview: "Real-time object detection and image preprocessing pipeline running on an FPGA-based preprocessing stage with the VEGA RISC-V processor. Designed for efficient feature extraction, noise reduction, and low-latency detection in hardware-constrained environments.",
     tech: ["FPGA", "VEGA RISC-V", "Image Processing", "Object Detection", "Edge AI"],
     outcomes: "Streamlined vision pipeline delivering low-latency detection on resource-constrained hardware.",
