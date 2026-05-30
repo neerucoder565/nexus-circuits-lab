@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import pidImg from "@/assets/project-pid.jpg";
 import r2rImg from "@/assets/project-r2r.jpg";
+import edgeVisionImg from "@/assets/project-edge-vision.png";
 import { R2R_CODE, PID_CODE, type CodeFile } from "@/data/project-code";
 
 export const Route = createFileRoute("/projects")({
