@@ -3,6 +3,312 @@
 
 export type CodeFile = { name: string; language: string; code: string };
 
+export const EDGE_VISION_CODE: CodeFile[] = [
+  {
+    name: "inference.py",
+    language: "python",
+    code: `"""
+Edge Vision Detection — Inference Module
+----------------------------------------
+Image Quality Assessment (IQA) + task-driven object detection
+using a YOLO backbone. Designed to pair with an FPGA preprocessing
+stage that handles denoise / deblur / contrast correction when
+the IQA module flags low-quality input.
+
+DVCon India 2026 — Team ARCH NOVA
+"""
+
+from __future__ import annotations
+
+import cv2
+import numpy as np
+from PIL import Image, ImageDraw
+from ultralytics import YOLO
+
+# ---------------------------------------------------------------------------
+# Task definitions (COCO-Tasks dataset)
+# ---------------------------------------------------------------------------
+TASK_OBJECTS: dict[int, list[str]] = {
+    1:  ["chair", "bench", "bed", "suitcase"],
+    2:  ["bed", "couch", "chair", "bench"],
+    3:  ["vase", "bowl", "cup", "bottle"],
+    4:  ["fork", "spoon", "knife"],
+    5:  ["bottle", "cup", "bowl", "vase"],
+    6:  ["spoon", "fork", "knife", "cup"],
+    7:  ["fork", "knife", "spoon"],
+    8:  ["bottle", "knife", "scissors", "fork"],
+    9:  ["scissors", "knife", "fork", "bottle"],
+    10: ["wine glass", "cup", "bowl", "bottle"],
+    11: ["bowl", "cup", "spoon", "bottle"],
+    12: ["knife", "spoon", "fork"],
+    13: ["fire hydrant", "bottle", "bowl"],
+    14: ["baseball bat", "bottle", "umbrella", "tennis racket"],
+}
+
+TASK_NAMES: dict[int, str] = {
+    1:  "Step on something to reach shelf",
+    2:  "Sit comfortably",
+    3:  "Place flowers",
+    4:  "Get potatoes out of fire",
+    5:  "Water plant",
+    6:  "Get lemon out of tea",
+    7:  "Dig hole",
+    8:  "Open bottle of beer",
+    9:  "Open parcel",
+    10: "Serve wine",
+    11: "Pour sugar",
+    12: "Smear butter",
+    13: "Extinguish fire",
+    14: "Pound carpet",
+}
+
+# ---------------------------------------------------------------------------
+# IQA thresholds (tuned empirically on validation set)
+# ---------------------------------------------------------------------------
+T_BLUR     = 100.0   # Laplacian variance — below = blurry
+T_NOISE    = 500.0   # Pixel variance     — above = noisy
+T_CONTRAST = 40.0    # Histogram std-dev  — below = low contrast
+
+# Lazy-loaded model handle
+_MODEL: YOLO | None = None
+
+
+def load_model(weights: str = "yolo11n.pt") -> YOLO:
+    """Load (and cache) the YOLO detector."""
+    global _MODEL
+    if _MODEL is None:
+        _MODEL = YOLO(weights)
+    return _MODEL
+
+
+# ---------------------------------------------------------------------------
+# Image Quality Assessment
+# ---------------------------------------------------------------------------
+def assess_quality(image_path: str) -> dict:
+    """Return blur / noise / contrast scores and an overall verdict."""
+    img  = cv2.imread(image_path)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    blur_score  = round(cv2.Laplacian(gray, cv2.CV_64F).var(), 2)
+    noise_score = round(float(np.var(gray)), 2)
+
+    hist = cv2.calcHist([gray], [0], None, [256], [0, 256]).flatten()
+    hist = hist / hist.sum()
+    k    = np.arange(256)
+    mu   = float(np.sum(k * hist))
+    contrast_score = round(float(np.sqrt(np.sum(((k - mu) ** 2) * hist))), 2)
+
+    is_blurry       = blur_score  < T_BLUR
+    is_noisy        = noise_score > T_NOISE
+    is_low_contrast = contrast_score < T_CONTRAST
+
+    return {
+        "blur_score":      blur_score,
+        "noise_score":     noise_score,
+        "contrast_score":  contrast_score,
+        "is_blurry":       is_blurry,
+        "is_noisy":        is_noisy,
+        "is_low_contrast": is_low_contrast,
+        "quality": "Low" if (is_blurry or is_noisy or is_low_contrast) else "High",
+    }
+
+
+# ---------------------------------------------------------------------------
+# Task-driven object detection
+# ---------------------------------------------------------------------------
+def detect_best_object(image_path: str, task_id: int):
+    """
+    Run detection and select the highest-priority object for the given task.
+    Returns: (annotated_image, best_class_name | None, best_confidence | -1)
+    """
+    model      = load_model()
+    preferred  = TASK_OBJECTS[task_id]
+    detections = model(image_path, verbose=False)[0]
+
+    image = Image.open(image_path).convert("RGB")
+    draw  = ImageDraw.Draw(image)
+
+    best_box, best_class, best_conf, best_score = None, None, -1.0, -1.0
+
+    for box in detections.boxes:
+        class_name = model.names[int(box.cls)]
+        confidence = float(box.conf)
+        x1, y1, x2, y2 = box.xyxy[0].tolist()
+
+        # Draw every detection in red
+        draw.rectangle([x1, y1, x2, y2], outline="red", width=2)
+
+        if class_name in preferred:
+            priority = preferred.index(class_name)
+            score    = (len(preferred) - priority) * 10 + confidence
+            if score > best_score:
+                best_score = score
+                best_box   = [x1, y1, x2, y2]
+                best_class = class_name
+                best_conf  = confidence
+
+    # Highlight the winner in lime green
+    if best_box is not None:
+        x1, y1, x2, y2 = best_box
+        draw.rectangle([x1, y1, x2, y2], outline="lime", width=5)
+        draw.rectangle([x1, y1 - 25, x2, y1], fill="lime")
+        draw.text(
+            (x1 + 5, y1 - 20),
+            f"BEST: {best_class} ({best_conf:.0%})",
+            fill="black",
+        )
+
+    return image, best_class, best_conf
+`,
+  },
+  {
+    name: "app.py",
+    language: "python",
+    code: `"""
+Edge Vision Detection — Streamlit Frontend
+------------------------------------------
+Interactive demo: upload an image, run IQA, then run task-driven
+object detection. The IQA stage mirrors the FPGA preprocessing
+pipeline used in the hardware deployment.
+
+Run:
+    streamlit run app.py
+"""
+
+import os
+import tempfile
+
+import streamlit as st
+from PIL import Image
+
+from inference import (
+    TASK_NAMES,
+    TASK_OBJECTS,
+    T_BLUR,
+    T_CONTRAST,
+    T_NOISE,
+    assess_quality,
+    detect_best_object,
+)
+
+# ---------------------------------------------------------------------------
+# Page config
+# ---------------------------------------------------------------------------
+st.set_page_config(
+    page_title="Task Driven Object Detection",
+    page_icon="🎯",
+    layout="wide",
+)
+
+st.title("🎯 Task Driven Object Detection")
+st.write("DVCon India 2026 — Design Contest | Team ARCH NOVA")
+st.divider()
+
+# ---------------------------------------------------------------------------
+# Sidebar — task selection
+# ---------------------------------------------------------------------------
+st.sidebar.title("⚙️  Settings")
+task_id = st.sidebar.selectbox(
+    "Select Task:",
+    options=list(TASK_NAMES.keys()),
+    format_func=lambda x: f"Task {x}: {TASK_NAMES[x]}",
+)
+st.sidebar.info(
+    f"**Task {task_id}:** {TASK_NAMES[task_id]}\\n\\n"
+    "**Looking for:**\\n"
+    + "\\n".join(f"- {obj}" for obj in TASK_OBJECTS[task_id])
+)
+
+# ---------------------------------------------------------------------------
+# Main panel
+# ---------------------------------------------------------------------------
+uploaded = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
+
+if not uploaded:
+    st.info("Upload an image to start.")
+    st.stop()
+
+image  = Image.open(uploaded).convert("RGB")
+suffix = ".jpg" if uploaded.name.lower().endswith(("jpg", "jpeg")) else ".png"
+
+with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as f:
+    image.save(f.name)
+    temp_path = f.name
+
+col1, col2 = st.columns(2)
+with col1:
+    st.subheader("Original Image")
+    st.image(image, use_container_width=True)
+
+# ---------------------------------------------------------------------------
+# IQA stage
+# ---------------------------------------------------------------------------
+st.divider()
+st.subheader("Image Quality Assessment")
+
+qr = assess_quality(temp_path)
+m1, m2, m3 = st.columns(3)
+
+with m1:
+    st.metric("Blur Score (Laplacian Variance)", qr["blur_score"],
+              delta=f"Threshold: {T_BLUR}", delta_color="off")
+    (st.error if qr["is_blurry"] else st.success)(
+        f"{'🔴 BLURRY' if qr['is_blurry'] else '🟢 Sharp'} (threshold {T_BLUR})"
+    )
+
+with m2:
+    st.metric("Noise Score (Pixel Variance)", qr["noise_score"],
+              delta=f"Threshold: {T_NOISE}", delta_color="off")
+    (st.error if qr["is_noisy"] else st.success)(
+        f"{'🔴 NOISY' if qr['is_noisy'] else '🟢 Clean'} (threshold {T_NOISE})"
+    )
+
+with m3:
+    st.metric("Contrast Score (Histogram σ)", qr["contrast_score"],
+              delta=f"Threshold: {T_CONTRAST}", delta_color="off")
+    (st.error if qr["is_low_contrast"] else st.success)(
+        f"{'🔴 LOW CONTRAST' if qr['is_low_contrast'] else '🟢 Good Contrast'} "
+        f"(threshold {T_CONTRAST})"
+    )
+
+st.divider()
+if qr["quality"] == "High":
+    st.success("Overall Quality: HIGH — no preprocessing needed.")
+else:
+    st.warning("Overall Quality: LOW — preprocessing required "
+               "(handled by FPGA in hardware).")
+
+# ---------------------------------------------------------------------------
+# Detection stage
+# ---------------------------------------------------------------------------
+st.divider()
+if st.button("▶ Detect Best Object", type="primary", use_container_width=True):
+    with st.spinner("Detecting..."):
+        result_img, best_class, best_conf = detect_best_object(temp_path, task_id)
+
+    with col2:
+        st.subheader("Detection Result")
+        st.image(result_img, use_container_width=True)
+        if best_class:
+            st.success(
+                f"Best Object: **{best_class}**  |  "
+                f"Confidence: **{best_conf:.0%}**"
+            )
+        else:
+            st.warning("No suitable object found for this task.")
+
+os.unlink(temp_path)
+
+st.divider()
+st.caption(
+    "DVCon India 2026  |  Task Driven Object Detection  |  "
+    "COCO-Tasks Dataset  |  Team ARCH NOVA"
+)
+`,
+  },
+];
+
+
 export const R2R_CODE: CodeFile[] = [
   {
     name: "r2r_dac.ino",
