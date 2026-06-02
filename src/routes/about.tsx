@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Panel, Section } from "@/components/SiteShell";
-import { GraduationCap, Briefcase } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -52,8 +52,8 @@ function About() {
         </div>
       </Section>
 
-      <Section eyebrow="EDUCATION & EXPERIENCE" title="Trajectory">
-        <div className="grid md:grid-cols-2 gap-6">
+      <Section eyebrow="EDUCATION" title="Trajectory">
+        <div className="grid md:grid-cols-1 gap-6">
           <Panel>
             <GraduationCap className="text-neon mb-3" size={24} strokeWidth={1.5} />
             <h3 className="font-display text-xl uppercase">Education</h3>
@@ -61,20 +61,6 @@ function About() {
               <div className="text-sm">B.E. — Electronics & Communication Engineering</div>
               <div className="text-xs text-muted-foreground mt-1">
                 Easwari Engineering College
-              </div>
-            </div>
-          </Panel>
-          <Panel>
-            <Briefcase className="text-neon mb-3" size={24} strokeWidth={1.5} />
-            <h3 className="font-display text-xl uppercase">Experience</h3>
-            <div className="mt-4 space-y-3 text-sm">
-              <div>
-                <div>Structural & Weight Analysis Engineer</div>
-                <div className="text-xs text-muted-foreground">Applied precision, tolerances, and system-constraint thinking from automotive analysis to inform embedded hardware design decisions.</div>
-              </div>
-              <div>
-                <div>Hardware-Focused Project Development</div>
-                <div className="text-xs text-muted-foreground">Embedded experimentation & electronics prototyping</div>
               </div>
             </div>
           </Panel>
