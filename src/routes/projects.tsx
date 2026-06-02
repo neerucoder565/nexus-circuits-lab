@@ -44,6 +44,7 @@ const PROJECTS: Project[] = [
     overview: "Real-time object detection and image preprocessing pipeline running on an FPGA-based preprocessing stage with the VEGA RISC-V processor. Designed for efficient feature extraction, noise reduction, and low-latency detection in hardware-constrained environments.",
     tech: ["FPGA", "VEGA RISC-V", "Image Processing", "Object Detection", "Edge AI"],
     outcomes: "Streamlined vision pipeline delivering low-latency detection on resource-constrained hardware.",
+    code: EDGE_VISION_CODE,
   },
   {
     id: "02",
