@@ -32,7 +32,9 @@ type Project = {
   tech: string[];
   outcomes: string;
   code?: CodeFile[];
+  repo?: string;
 };
+
 
 const PROJECTS: Project[] = [
   {
@@ -56,7 +58,9 @@ const PROJECTS: Project[] = [
     tech: ["Arduino", "R-2R Ladder", "Breadboard", "Multimeter"],
     outcomes: "Stable linear voltage steps; demonstrated DAC fundamentals on bare hardware.",
     code: R2R_CODE,
+    repo: "https://github.com/Neeraj0410/Digital-To-Analog-Converter-Using-R-2R-Resistor-Ladder",
   },
+
   {
     id: "03",
     date: "2025-Q1",
@@ -76,7 +80,9 @@ const PROJECTS: Project[] = [
     tech: ["Control Theory", "Arduino", "Simulation", "Tuning"],
     outcomes: "Hands-on intuition for PID tuning trade-offs across plant dynamics.",
     code: PID_CODE,
+    repo: "https://github.com/Neeraj0410/Encoder-Based-PID-Motor-Control",
   },
+
 ];
 
 function CodeViewer({ project }: { project: Project }) {
@@ -149,7 +155,19 @@ function Projects() {
                     // Code coming soon
                   </span>
                 )}
-                <ExternalLink size={16} className="text-muted-foreground opacity-60" />
+                {p.repo ? (
+                  <a
+                    href={p.repo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Open GitHub repository for ${p.title}`}
+                    className="text-muted-foreground hover:text-neon transition-colors"
+                  >
+                    <ExternalLink size={16} />
+                  </a>
+                ) : (
+                  <ExternalLink size={16} className="text-muted-foreground opacity-60" />
+                )}
               </div>
             </div>
 
