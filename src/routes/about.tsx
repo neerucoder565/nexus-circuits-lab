@@ -28,16 +28,10 @@ function About() {
         <div className="grid lg:grid-cols-3 gap-8">
           <Panel className="lg:col-span-2">
             <p className="text-muted-foreground leading-relaxed">
-              Embedded systems engineer specializing in firmware, embedded hardware,
-              and real-time electronic systems. Experienced in circuit design, sensor
-              integration, DAC architectures, embedded control applications, and
-              programming with C, C++, and Python.
+              Electronics and Embedded Systems enthusiast with a strong interest in developing intelligent hardware and low-level software solutions. Hands-on experience through academic and personal projects involving microcontrollers, circuit design, sensor interfacing, digital-to-analog conversion, motor control, and real-time system implementation.
             </p>
             <p className="mt-4 text-muted-foreground leading-relaxed">
-              Focused on efficient system behavior, hardware-software interaction, and
-              reliable electronic design for intelligent embedded applications. Strong
-              technical interest in RISC-V computing, edge intelligence, and
-              next-generation embedded technologies.
+              Proficient in C, C++, and Python, with a focus on understanding hardware-software interaction, system optimization, and practical engineering problem-solving. Passionate about emerging technologies including RISC-V architectures, VLSI design, edge computing, and next-generation embedded platforms. Continuously exploring new concepts and building projects to strengthen expertise in embedded electronics, digital systems, and semiconductor technologies.
             </p>
           </Panel>
           <Panel>
