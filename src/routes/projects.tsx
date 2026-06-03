@@ -140,10 +140,7 @@ function Projects() {
             className="corners relative border border-border bg-card/40 p-6 glow-border-hover group"
           >
             <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="text-xs text-neon tracking-[0.3em]">PRJ_{p.id}</div>
-                <div className="text-[10px] text-muted-foreground tracking-[0.25em]">// {p.date}</div>
-              </div>
+              <div className="text-xs text-neon tracking-[0.3em]">PRJ_{p.id}</div>
               <div className="flex gap-2 items-center">
                 {p.code?.length ? (
                   <CodeViewer project={p} />
