@@ -58,7 +58,9 @@ const PROJECTS: Project[] = [
     tech: ["Arduino", "R-2R Ladder", "Breadboard", "Multimeter"],
     outcomes: "Stable linear voltage steps; demonstrated DAC fundamentals on bare hardware.",
     code: R2R_CODE,
+    repo: "https://github.com/Neeraj0410/Digital-To-Analog-Converter-Using-R-2R-Resistor-Ladder",
   },
+
   {
     id: "03",
     date: "2025-Q1",
