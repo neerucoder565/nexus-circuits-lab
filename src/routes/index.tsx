@@ -33,7 +33,7 @@ function Home() {
               & Hardware <span className="text-neon">Solutions</span>.
             </h1>
             <p className="mt-6 text-muted-foreground max-w-lg leading-relaxed">
-              Embedded systems engineer focused on firmware, circuit design, sensor integration, and real-time control systems. Specialized in intelligent hardware development, clean signal processing, and reliable embedded performance.
+              Passionate about Embedded Systems, VLSI Design, and Intelligent Hardware Development. Experienced in developing embedded projects involving firmware programming, circuit design, sensor interfacing, motor control, and real-time systems. Continuously expanding my expertise in embedded software, digital hardware design, semiconductor technologies, and next-generation chip development while building practical engineering solutions through hands-on projects.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3">
