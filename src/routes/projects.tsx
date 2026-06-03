@@ -155,7 +155,19 @@ function Projects() {
                     // Code coming soon
                   </span>
                 )}
-                <ExternalLink size={16} className="text-muted-foreground opacity-60" />
+                {p.repo ? (
+                  <a
+                    href={p.repo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Open GitHub repository for ${p.title}`}
+                    className="text-muted-foreground hover:text-neon transition-colors"
+                  >
+                    <ExternalLink size={16} />
+                  </a>
+                ) : (
+                  <ExternalLink size={16} className="text-muted-foreground opacity-60" />
+                )}
               </div>
             </div>
 
