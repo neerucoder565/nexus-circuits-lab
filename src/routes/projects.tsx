@@ -32,7 +32,9 @@ type Project = {
   tech: string[];
   outcomes: string;
   code?: CodeFile[];
+  repo?: string;
 };
+
 
 const PROJECTS: Project[] = [
   {
