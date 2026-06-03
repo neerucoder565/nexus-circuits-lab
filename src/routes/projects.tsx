@@ -80,7 +80,9 @@ const PROJECTS: Project[] = [
     tech: ["Control Theory", "Arduino", "Simulation", "Tuning"],
     outcomes: "Hands-on intuition for PID tuning trade-offs across plant dynamics.",
     code: PID_CODE,
+    repo: "https://github.com/Neeraj0410/Encoder-Based-PID-Motor-Control",
   },
+
 ];
 
 function CodeViewer({ project }: { project: Project }) {
