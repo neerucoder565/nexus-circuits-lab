@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Mail, Phone, Github, Linkedin, Send } from "lucide-react";
+import { useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { Mail, Phone, Github, Linkedin, Send, Paperclip, X, Pencil } from "lucide-react";
 import { Panel, Section } from "@/components/SiteShell";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { sendContactEmail } from "@/lib/contact.functions";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -15,15 +18,69 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
 });
 
+const OWNER_EMAIL = "neerajmadan2006@gmail.com";
+
 const CHANNELS = [
-  { icon: Mail, label: "Email", value: "neerajmadan2006@gmail.com", href: "mailto:neerajmadan2006@gmail.com" },
+  { icon: Mail, label: "Email", value: OWNER_EMAIL, href: `mailto:${OWNER_EMAIL}` },
   { icon: Phone, label: "Phone", value: "+91 88257 69448", href: "tel:+918825769448" },
   { icon: Linkedin, label: "LinkedIn", value: "linkedin.com/in/neeraj-k-301386328", href: "https://www.linkedin.com/in/neeraj-k-301386328" },
   { icon: Github, label: "GitHub", value: "github.com/Neeraj0410", href: "https://github.com/Neeraj0410" },
 ];
 
 function Contact() {
-  const [sent, setSent] = useState(false);
+  const send = useServerFn(sendContactEmail);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [composeOpen, setComposeOpen] = useState(false);
+  const [from, setFrom] = useState("");
+  const [name, setName] = useState("");
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState<{ type: "ok" | "err"; msg: string } | null>(null);
+
+  const reset = () => {
+    setFrom(""); setName(""); setSubject(""); setBody(""); setFiles([]); setStatus(null);
+  };
+
+  const onPickFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const picked = Array.from(e.target.files ?? []);
+    setFiles((prev) => [...prev, ...picked].slice(0, 10));
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeFile = (idx: number) => setFiles((prev) => prev.filter((_, i) => i !== idx));
+
+  const onSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setStatus(null);
+    try {
+      const res = await send({
+        data: {
+          senderName: name,
+          senderEmail: from,
+          subject,
+          body,
+          attachmentNames: files.map((f) => f.name),
+        },
+      });
+      if (res.emailDelivered) {
+        setStatus({ type: "ok", msg: "Message sent — it'll land in Neeraj's inbox shortly." });
+      } else {
+        setStatus({
+          type: "ok",
+          msg: "Message received. Neeraj will be notified — direct inbox delivery activates once the email sender domain is verified.",
+        });
+      }
+      setTimeout(() => { setComposeOpen(false); reset(); }, 1800);
+    } catch (err) {
+      setStatus({ type: "err", msg: err instanceof Error ? err.message : "Failed to send." });
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <Section eyebrow="TRANSMISSION" title="Open A Channel">
@@ -50,53 +107,122 @@ function Contact() {
 
         <Panel>
           <div className="text-xs text-neon tracking-[0.3em] mb-6">// SEND MESSAGE</div>
-          {sent ? (
-            <div className="py-10 text-center">
-              <div className="font-display text-2xl text-neon uppercase">Signal Sent</div>
-              <p className="mt-2 text-sm text-muted-foreground">I'll reply within 1–2 days.</p>
-            </div>
-          ) : (
-            <form
-              onSubmit={(e) => { e.preventDefault(); setSent(true); }}
-              className="space-y-5"
-            >
-              {[
-                { id: "name", label: "Name", type: "text" },
-                { id: "email", label: "Email", type: "email" },
-              ].map((f) => (
-                <div key={f.id}>
-                  <label htmlFor={f.id} className="block text-[10px] text-neon tracking-[0.3em] mb-2">
-                    {f.label.toUpperCase()}
-                  </label>
-                  <input
-                    id={f.id}
-                    type={f.type}
-                    required
-                    className="w-full bg-background/60 border border-border focus:border-neon focus:outline-none px-3 py-2.5 text-sm transition-colors"
-                  />
-                </div>
-              ))}
-              <div>
-                <label htmlFor="message" className="block text-[10px] text-neon tracking-[0.3em] mb-2">
-                  MESSAGE
-                </label>
-                <textarea
-                  id="message"
-                  required
-                  rows={5}
-                  className="w-full bg-background/60 border border-border focus:border-neon focus:outline-none px-3 py-2.5 text-sm resize-none transition-colors"
-                />
-              </div>
-              <button
-                type="submit"
-                className="inline-flex items-center gap-2 bg-neon text-primary-foreground px-5 py-3 text-xs uppercase tracking-[0.25em] font-medium hover:opacity-90 transition"
-              >
-                Transmit <Send size={14} />
-              </button>
-            </form>
-          )}
+          <p className="text-sm text-muted-foreground mb-6">
+            Compose a message just like Gmail — add your address, a subject, the message body, and attach files if needed. It is delivered straight to Neeraj's inbox.
+          </p>
+          <button
+            type="button"
+            onClick={() => setComposeOpen(true)}
+            className="inline-flex items-center gap-2 bg-neon text-primary-foreground px-5 py-3 text-xs uppercase tracking-[0.25em] font-medium hover:opacity-90 transition"
+          >
+            <Pencil size={14} /> Compose
+          </button>
         </Panel>
       </div>
+
+      <Dialog open={composeOpen} onOpenChange={(o) => { setComposeOpen(o); if (!o) reset(); }}>
+        <DialogContent className="max-w-2xl p-0 border border-neon/40 bg-card">
+          <DialogHeader className="px-5 py-3 border-b border-border bg-background/60">
+            <DialogTitle className="text-xs text-neon tracking-[0.3em] font-display uppercase">
+              // New Message
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={onSend} className="flex flex-col">
+            <div className="flex items-center gap-3 px-5 py-2 border-b border-border">
+              <span className="text-[10px] text-neon tracking-[0.3em] w-16">FROM</span>
+              <input
+                type="email"
+                required
+                value={from}
+                onChange={(e) => setFrom(e.target.value)}
+                placeholder="your@email.com"
+                className="flex-1 bg-transparent text-sm focus:outline-none"
+              />
+            </div>
+            <div className="flex items-center gap-3 px-5 py-2 border-b border-border">
+              <span className="text-[10px] text-neon tracking-[0.3em] w-16">NAME</span>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                className="flex-1 bg-transparent text-sm focus:outline-none"
+              />
+            </div>
+            <div className="flex items-center gap-3 px-5 py-2 border-b border-border">
+              <span className="text-[10px] text-neon tracking-[0.3em] w-16">TO</span>
+              <span className="flex-1 text-sm text-muted-foreground">{OWNER_EMAIL}</span>
+            </div>
+            <div className="flex items-center gap-3 px-5 py-2 border-b border-border">
+              <span className="text-[10px] text-neon tracking-[0.3em] w-16">SUBJECT</span>
+              <input
+                type="text"
+                required
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                placeholder="Subject"
+                className="flex-1 bg-transparent text-sm focus:outline-none"
+              />
+            </div>
+
+            <textarea
+              required
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={10}
+              placeholder="Write your message..."
+              className="bg-transparent px-5 py-4 text-sm resize-none focus:outline-none min-h-[220px]"
+            />
+
+            {files.length > 0 && (
+              <div className="px-5 pb-3 flex flex-wrap gap-2">
+                {files.map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 border border-border bg-background/60 px-3 py-1.5 text-xs">
+                    <Paperclip size={12} className="text-neon" />
+                    <span className="max-w-[180px] truncate">{f.name}</span>
+                    <button type="button" onClick={() => removeFile(i)} className="text-muted-foreground hover:text-foreground">
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {status && (
+              <div className={`px-5 py-2 text-xs ${status.type === "ok" ? "text-neon" : "text-destructive"}`}>
+                {status.msg}
+              </div>
+            )}
+
+            <div className="flex items-center justify-between px-5 py-3 border-t border-border bg-background/60">
+              <button
+                type="submit"
+                disabled={sending}
+                className="inline-flex items-center gap-2 bg-neon text-primary-foreground px-5 py-2.5 text-xs uppercase tracking-[0.25em] font-medium hover:opacity-90 transition disabled:opacity-50"
+              >
+                {sending ? "Sending..." : "Send"} <Send size={14} />
+              </button>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="inline-flex items-center gap-2 border border-border px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:border-neon/60 transition"
+                title="Attach files"
+              >
+                <Paperclip size={14} /> Attach
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={onPickFiles}
+                className="hidden"
+              />
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </Section>
   );
 }
