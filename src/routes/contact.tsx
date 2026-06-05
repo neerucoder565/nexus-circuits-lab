@@ -107,9 +107,6 @@ function Contact() {
 
         <Panel>
           <div className="text-xs text-neon tracking-[0.3em] mb-6">// SEND MESSAGE</div>
-          <p className="text-sm text-muted-foreground mb-6">
-            Compose a message just like Gmail — add your address, a subject, the message body, and attach files if needed. It is delivered straight to Neeraj's inbox.
-          </p>
           <button
             type="button"
             onClick={() => setComposeOpen(true)}
