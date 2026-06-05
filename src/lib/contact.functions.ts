@@ -9,7 +9,7 @@ const schema = z.object({
   attachmentNames: z.array(z.string().max(255)).max(10).default([]),
 });
 
-const OWNER_EMAIL = "neerajmadan2006@gmail.com";
+const OWNER_EMAIL = "neerajmohan0410@gmail.com";
 
 function encodeRFC2047(str: string): string {
   // eslint-disable-next-line no-control-regex
