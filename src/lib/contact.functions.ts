@@ -9,12 +9,48 @@ const schema = z.object({
   attachmentNames: z.array(z.string().max(255)).max(10).default([]),
 });
 
+const OWNER_EMAIL = "neerajmadan2006@gmail.com";
+
+function encodeRFC2047(str: string): string {
+  // eslint-disable-next-line no-control-regex
+  if (/^[\x00-\x7F]*$/.test(str)) return str;
+  const b64 = Buffer.from(str, "utf-8").toString("base64");
+  return `=?UTF-8?B?${b64}?=`;
+}
+
+function buildRawEmail(opts: {
+  to: string;
+  from: string;
+  replyTo: string;
+  replyToName: string;
+  subject: string;
+  body: string;
+}): string {
+  const lines = [
+    `To: ${opts.to}`,
+    `From: ${encodeRFC2047(opts.replyToName)} <${opts.from}>`,
+    `Reply-To: ${encodeRFC2047(opts.replyToName)} <${opts.replyTo}>`,
+    `Subject: ${encodeRFC2047(opts.subject)}`,
+    'MIME-Version: 1.0',
+    'Content-Type: text/plain; charset="UTF-8"',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    opts.body,
+  ];
+  const raw = lines.join('\r\n');
+  return Buffer.from(raw, 'utf-8')
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
 export const sendContactEmail = createServerFn({ method: "POST" })
   .inputValidator((input) => schema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // 1. Always persist the message so nothing is lost.
+    // 1. Persist the message (audit trail).
     const { error: insertError } = await supabaseAdmin
       .from("contact_messages")
       .insert({
@@ -30,47 +66,68 @@ export const sendContactEmail = createServerFn({ method: "POST" })
       throw new Error("Could not save your message. Please try again.");
     }
 
-    // 2. Best-effort email delivery via Lovable Emails (requires verified sender domain).
-    let emailDelivered = false;
-    let emailError: string | null = null;
+    // 2. Send via Gmail API (delivered straight to the owner's inbox).
+    const lovableKey = process.env.LOVABLE_API_KEY;
+    const gmailKey = process.env.GOOGLE_MAIL_API_KEY;
+
+    if (!lovableKey || !gmailKey) {
+      return {
+        saved: true,
+        emailDelivered: false,
+        emailError: "Email service not configured.",
+      };
+    }
+
+    const attachmentsLine = data.attachmentNames.length
+      ? `\n\nAttachments mentioned by sender:\n- ${data.attachmentNames.join("\n- ")}`
+      : "";
+
+    const bodyText =
+      `New message from your portfolio contact form\n` +
+      `------------------------------------------------\n` +
+      `From: ${data.senderName} <${data.senderEmail}>\n\n` +
+      `${data.body}${attachmentsLine}`;
+
+    const raw = buildRawEmail({
+      to: OWNER_EMAIL,
+      from: OWNER_EMAIL,
+      replyTo: data.senderEmail,
+      replyToName: data.senderName,
+      subject: `[Portfolio] ${data.subject}`,
+      body: bodyText,
+    });
 
     try {
-      const origin = process.env.LOVABLE_PROJECT_URL ?? "";
-      const url = `${origin}/lovable/email/transactional/send`;
-      const apiKey = process.env.LOVABLE_API_KEY;
-
-      if (apiKey && origin) {
-        const attachmentsLine = data.attachmentNames.length
-          ? `\n\nAttachments mentioned by sender:\n- ${data.attachmentNames.join("\n- ")}`
-          : "";
-
-        const res = await fetch(url, {
+      const res = await fetch(
+        "https://connector-gateway.lovable.dev/google_mail/gmail/v1/users/me/messages/send",
+        {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: `Bearer ${lovableKey}`,
+            "X-Connection-Api-Key": gmailKey,
           },
-          body: JSON.stringify({
-            templateName: "contact-relay",
-            recipientEmail: "neerajmadan2006@gmail.com",
-            idempotencyKey: `contact-${Date.now()}-${data.senderEmail}`,
-            templateData: {
-              senderName: data.senderName,
-              senderEmail: data.senderEmail,
-              subject: data.subject,
-              body: data.body + attachmentsLine,
-            },
-          }),
-        });
-        emailDelivered = res.ok;
-        if (!res.ok) emailError = `Email send returned ${res.status}`;
-      } else {
-        emailError = "Email infrastructure not configured yet.";
-      }
-    } catch (e) {
-      console.error("contact email send failed", e);
-      emailError = e instanceof Error ? e.message : "Unknown email error";
-    }
+          body: JSON.stringify({ raw }),
+        },
+      );
 
-    return { saved: true, emailDelivered, emailError };
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error("Gmail send failed", res.status, errText);
+        return {
+          saved: true,
+          emailDelivered: false,
+          emailError: `Gmail send failed (${res.status})`,
+        };
+      }
+
+      return { saved: true, emailDelivered: true, emailError: null };
+    } catch (e) {
+      console.error("Gmail send threw", e);
+      return {
+        saved: true,
+        emailDelivered: false,
+        emailError: e instanceof Error ? e.message : "Unknown error",
+      };
+    }
   });
