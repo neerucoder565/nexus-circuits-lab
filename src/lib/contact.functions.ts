@@ -48,25 +48,7 @@ function buildRawEmail(opts: {
 export const sendContactEmail = createServerFn({ method: "POST" })
   .inputValidator((input) => schema.parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    // 1. Persist the message (audit trail).
-    const { error: insertError } = await supabaseAdmin
-      .from("contact_messages")
-      .insert({
-        sender_name: data.senderName,
-        sender_email: data.senderEmail,
-        subject: data.subject,
-        body: data.body,
-        attachment_names: data.attachmentNames,
-      });
-
-    if (insertError) {
-      console.error("contact_messages insert failed", insertError);
-      throw new Error("Could not save your message. Please try again.");
-    }
-
-    // 2. Send via Gmail API (delivered straight to the owner's inbox).
+    // Send via Gmail API (delivered straight to the owner's inbox).
     const lovableKey = process.env.LOVABLE_API_KEY;
     const gmailKey = process.env.GOOGLE_MAIL_API_KEY;
 
