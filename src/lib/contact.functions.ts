@@ -9,6 +9,9 @@ const schema = z.object({
   attachmentNames: z.array(z.string().max(255)).max(10).default([]),
 });
 
+// Displayed/public-facing address shown in the UI
+const PUBLIC_EMAIL = "neerajmadan2006@gmail.com";
+// Actual inbox where messages are delivered (Gmail connector account)
 const OWNER_EMAIL = "neerajmohan0410@gmail.com";
 
 function encodeRFC2047(str: string): string {
