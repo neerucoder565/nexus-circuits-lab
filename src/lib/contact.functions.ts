@@ -51,7 +51,8 @@ function buildRawEmail(opts: {
 export const sendContactEmail = createServerFn({ method: "POST" })
   .inputValidator((input) => schema.parse(input))
   .handler(async ({ data }) => {
-    // Send via Gmail API (delivered straight to the owner's inbox).
+    // Write directly into the connected Gmail mailbox so it appears in Inbox
+    // even when the connected account and recipient inbox are the same account.
     const lovableKey = process.env.LOVABLE_API_KEY;
     const gmailKey = process.env.GOOGLE_MAIL_API_KEY;
 
@@ -75,7 +76,7 @@ export const sendContactEmail = createServerFn({ method: "POST" })
 
     const raw = buildRawEmail({
       to: OWNER_EMAIL,
-      from: OWNER_EMAIL,
+      from: PUBLIC_EMAIL,
       replyTo: data.senderEmail,
       replyToName: data.senderName,
       subject: `[Portfolio] ${data.subject}`,
@@ -84,7 +85,7 @@ export const sendContactEmail = createServerFn({ method: "POST" })
 
     try {
       const res = await fetch(
-        "https://connector-gateway.lovable.dev/google_mail/gmail/v1/users/me/messages/send",
+        "https://connector-gateway.lovable.dev/google_mail/gmail/v1/users/me/messages",
         {
           method: "POST",
           headers: {
@@ -92,17 +93,20 @@ export const sendContactEmail = createServerFn({ method: "POST" })
             Authorization: `Bearer ${lovableKey}`,
             "X-Connection-Api-Key": gmailKey,
           },
-          body: JSON.stringify({ raw }),
+          body: JSON.stringify({
+            raw,
+            labelIds: ["INBOX", "UNREAD"],
+          }),
         },
       );
 
       if (!res.ok) {
         const errText = await res.text();
-        console.error("Gmail send failed", res.status, errText);
+        console.error("Gmail inbox insert failed", res.status, errText);
         return {
           saved: true,
           emailDelivered: false,
-          emailError: `Gmail send failed (${res.status})`,
+          emailError: `Gmail inbox insert failed (${res.status})`,
         };
       }
 
