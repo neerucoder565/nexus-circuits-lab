@@ -18,7 +18,7 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
 });
 
-const OWNER_EMAIL = "neerajmohan0410@gmail.com";
+const OWNER_EMAIL = "neerajmadan2006@gmail.com";
 
 const CHANNELS = [
   { icon: Mail, label: "Email", value: OWNER_EMAIL, href: `mailto:${OWNER_EMAIL}` },
