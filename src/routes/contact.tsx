@@ -63,6 +63,9 @@ function Contact() {
       ? `\n\nAttachments mentioned by sender:\n- ${files.map((f) => f.name).join("\n- ")}`
       : "";
 
+    const message = `Subject: ${subject}\n\n${body}${attachmentsLine}`;
+    console.log('Sending with:', { name, email: from, message });
+
     emailjs
       .send(
         EMAILJS_SERVICE_ID,
@@ -70,7 +73,7 @@ function Contact() {
         {
           name,
           email: from,
-          message: `Subject: ${subject}\n\n${body}${attachmentsLine}`,
+          message,
         },
         { publicKey: EMAILJS_PUBLIC_KEY },
       )
@@ -79,7 +82,8 @@ function Contact() {
         reset();
         setTimeout(() => { setComposeOpen(false); setStatus(null); }, 1800);
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error('EmailJS error:', JSON.stringify(error));
         setStatus({ type: "err", msg: "Something went wrong. Please try again." });
       })
       .finally(() => {
