@@ -67,6 +67,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Share+Tech+Mono&display=swap" },
     ],
+    scripts: [
+      { src: "https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,

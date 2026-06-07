@@ -1,9 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import emailjs from "@emailjs/browser";
 import { Mail, Phone, Github, Linkedin, Send, Paperclip, X, Pencil } from "lucide-react";
 import { Panel, Section } from "@/components/SiteShell";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+declare global {
+  interface Window {
+    emailjs: {
+      init: (publicKey: string) => void;
+      send: (serviceId: string, templateId: string, params: Record<string, unknown>) => Promise<unknown>;
+    };
+  }
+}
 
 const EMAILJS_SERVICE_ID = "service_sprxe28";
 const EMAILJS_TEMPLATE_ID = "template_u1nsr7c";
@@ -64,27 +72,28 @@ function Contact() {
       : "";
 
     const message = `Subject: ${subject}\n\n${body}${attachmentsLine}`;
-    console.log('Sending with:', { name, email: from, message });
 
-    emailjs
-      .send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          name,
-          email: from,
-          message,
-        },
-        { publicKey: EMAILJS_PUBLIC_KEY },
-      )
+    if (typeof window === "undefined" || !window.emailjs) {
+      setStatus({ type: "err", msg: "Email service not loaded. Please refresh and try again." });
+      setSending(false);
+      return;
+    }
+
+    window.emailjs.init(EMAILJS_PUBLIC_KEY);
+    window.emailjs
+      .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        name,
+        email: from,
+        message,
+      })
       .then(() => {
-        setStatus({ type: "ok", msg: "Message sent! I'll get back to you soon." });
+        setStatus({ type: "ok", msg: "Message sent successfully!" });
         reset();
         setTimeout(() => { setComposeOpen(false); setStatus(null); }, 1800);
       })
-      .catch((error) => {
-        console.error('EmailJS error:', JSON.stringify(error));
-        setStatus({ type: "err", msg: "Something went wrong. Please try again." });
+      .catch((err: unknown) => {
+        console.error(err);
+        setStatus({ type: "err", msg: "Failed to send. Please try again." });
       })
       .finally(() => {
         setSending(false);
