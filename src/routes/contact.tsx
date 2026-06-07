@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
+import emailjs from "@emailjs/browser";
 import { Mail, Phone, Github, Linkedin, Send, Paperclip, X, Pencil } from "lucide-react";
 import { Panel, Section } from "@/components/SiteShell";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { sendContactEmail } from "@/lib/contact.functions";
+
+const EMAILJS_SERVICE_ID = "service_sprxe28";
+const EMAILJS_TEMPLATE_ID = "template_u1nsr7c";
+const EMAILJS_PUBLIC_KEY = "1F_8QdHWtlV2JcMMY";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
