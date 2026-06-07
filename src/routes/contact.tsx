@@ -31,7 +31,6 @@ const CHANNELS = [
 ];
 
 function Contact() {
-  const send = useServerFn(sendContactEmail);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [composeOpen, setComposeOpen] = useState(false);
@@ -55,34 +54,37 @@ function Contact() {
 
   const removeFile = (idx: number) => setFiles((prev) => prev.filter((_, i) => i !== idx));
 
-  const onSend = async (e: React.FormEvent) => {
+  const onSend = (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
     setStatus(null);
-    try {
-      const res = await send({
-        data: {
-          senderName: name,
-          senderEmail: from,
-          subject,
-          body,
-          attachmentNames: files.map((f) => f.name),
+
+    const attachmentsLine = files.length
+      ? `\n\nAttachments mentioned by sender:\n- ${files.map((f) => f.name).join("\n- ")}`
+      : "";
+
+    emailjs
+      .send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          name,
+          email: from,
+          message: `Subject: ${subject}\n\n${body}${attachmentsLine}`,
         },
+        { publicKey: EMAILJS_PUBLIC_KEY },
+      )
+      .then(() => {
+        setStatus({ type: "ok", msg: "Message sent! I'll get back to you soon." });
+        reset();
+        setTimeout(() => { setComposeOpen(false); setStatus(null); }, 1800);
+      })
+      .catch(() => {
+        setStatus({ type: "err", msg: "Something went wrong. Please try again." });
+      })
+      .finally(() => {
+        setSending(false);
       });
-      if (res.emailDelivered) {
-        setStatus({ type: "ok", msg: "Message sent — it'll land in Neeraj's inbox shortly." });
-      } else {
-        setStatus({
-          type: "ok",
-          msg: "Message received. Neeraj will be notified — direct inbox delivery activates once the email sender domain is verified.",
-        });
-      }
-      setTimeout(() => { setComposeOpen(false); reset(); }, 1800);
-    } catch (err) {
-      setStatus({ type: "err", msg: err instanceof Error ? err.message : "Failed to send." });
-    } finally {
-      setSending(false);
-    }
   };
 
   return (
