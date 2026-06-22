@@ -8,7 +8,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import pidImg from "@/assets/project-pid.jpg";
 import r2rImg from "@/assets/project-r2r.jpg";
 import edgeVisionImg from "@/assets/project-edge-vision.png";
-import { R2R_CODE, PID_CODE, EDGE_VISION_CODE, type CodeFile } from "@/data/project-code";
+
+import { R2R_CODE, PID_CODE, EDGE_VISION_CODE, BOOTLOADER_CODE, type CodeFile } from "@/data/project-code";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
@@ -60,15 +61,16 @@ const PROJECTS: Project[] = [
     code: R2R_CODE,
     repo: "https://github.com/Neeraj0410/Digital-To-Analog-Converter-Using-R-2R-Resistor-Ladder",
   },
-
   {
     id: "03",
     date: "2025-Q1",
-    title: "Sensor Fusion Prototype",
-    sub: "Embedded Motion Sensing",
-    overview: "Integrated motion sensors and fusion algorithms on breadboard hardware. Explored complementary and Kalman-style filtering for orientation tracking.",
-    tech: ["IMU", "Arduino", "Sensor Fusion", "Signal Processing"],
-    outcomes: "Reliable orientation data from low-cost sensors via fused signal pipeline.",
+    title: "BARE-METAL BOOTLOADER",
+    sub: "Embedded Firmware Architecture",
+    image: "/bootloader.png",
+    overview: "Written a bare-metal bootloader from scratch on STM32F407VGT6. Partitioned flash memory manually, implemented vector table relocation and MSP configuration for clean firmware handoff to application.",
+    tech: ["STM32", "BARE-METAL", "FLASH MEMORY", "FIRMWARE"],
+    outcomes: "Dual firmware in flash with stable bootloader-to-application jump via Reset Handler",
+    repo: "https://github.com/Neeraj0410/BootLoader",
   },
   {
     id: "04",
